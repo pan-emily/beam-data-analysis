@@ -120,7 +120,7 @@ class ScanData:
     ----------
     data : array 
             Data values of the file. The indices of the array correspoond to the channels. Each channel is a TimeSeries object.
-    meta : dict 
+    meta : List of dicts
             Metadata of the file.
     """
     
@@ -294,7 +294,8 @@ def get_scan(folder_path, file_name, channels, start, end):
         for j  in range(len(channels)):
             scan_data[j][i] = filedata.data[j]
 
-    scan = ScanData(scan_data, calculate_meta(scan_meta))
+#     scan = ScanData(scan_data, calculate_meta(scan_meta))
+    scan = ScanData(scan_data, scan_meta)
     return scan
     
 def get_scan_files(folder_path, file_name, start, end):
@@ -307,12 +308,12 @@ def get_scan_files(folder_path, file_name, start, end):
         scan_files.append(file)
     return scan_files
 
-def calculate_meta(meta):
-    """
-    Calculates metadata for the scan by averaging values.
-    """
-    #TODO
-    return meta[0]
+# def calculate_meta(meta):
+#     """
+#     Calculates metadata for the scan by averaging values.
+#     """
+#     #TODO
+#     return meta[0]
 
 
 def write_data_ts(file_path, data_ts):
