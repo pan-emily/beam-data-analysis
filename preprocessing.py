@@ -130,7 +130,7 @@ class ScanData:
          
 
 
-def read_single_data_file(file_path, process_data=True):
+def read_single_data_file(file_path, channels, process_data=True):
     '''
     Extracts raw and metadata from a file given its path, stores data as a FileData object.
     
@@ -157,7 +157,7 @@ def read_single_data_file(file_path, process_data=True):
     for i in range(len(channels)):
         channel_ts = TimeSeries(raw[i], meta, i)
         if process_data == True:
-            processed = process(channel_ts)
+            processed = process(channel_ts, channels)
             file_data_arr[i] = processed
         else:
             file_data_arr[i] = channel_ts
@@ -243,7 +243,7 @@ def import_metadata(file_path):
         if 'HFwavemeter' in text:
             meta['frequency_HF']  = float(split_strip(text))
     meta['start'] = 0
-    meta['channels'] = channels
+#     meta['channels'] = channels
     meta['YAGtrig'] = 2 #hard coded for now
     return meta
 
@@ -263,7 +263,7 @@ def import_raw(file_path):
     return raw_data
 
 
-def get_scan(folder_path, file_name, start, end):
+def get_scan(folder_path, file_name, channels, start, end):
     """
     Gets data from a scan of data, stores as a ScanData object.
     
@@ -289,7 +289,7 @@ def get_scan(folder_path, file_name, start, end):
     scan_meta = []
     
     for i in range(len(scan_files)):
-        filedata = read_single_data_file(scan_files[i])
+        filedata = read_single_data_file(scan_files[i], channels)
         scan_meta.append(filedata.meta)
         for j  in range(len(channels)):
             scan_data[j][i] = filedata.data[j]
@@ -351,13 +351,13 @@ def plot_FileData(filedata):
 def plot_ScanData(scandata):
     ts_sample = scandata.data[0][0]
     time = ts_sample.generate_time_array()
-    for channel in range(len(channels)):
+    for channel in range(len(scandata.data)):
         plt.figure()
         for ts in scandata.data[channel]:
             plt.plot(time, ts.data)
 
 
-def process(timeseries):
+def process(timeseries, channels):
     """
     Applies Butterworth filter and handles offset. 
     """
