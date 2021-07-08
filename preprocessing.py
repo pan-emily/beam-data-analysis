@@ -315,6 +315,12 @@ def get_scan_files(folder_path, file_name, start, end):
 #     #TODO
 #     return meta[0]
 
+def find_end_scan(folder_path, file_name):
+    file_num = 1
+    while os.path.isfile(gen_data_filepath(folder_path, file_name, file_num)):
+        file_num+=1
+    return file_num-1
+
 
 def write_data_ts(file_path, data_ts):
     """
