@@ -124,9 +124,9 @@ class ScanData:
             Metadata of the file.
     """
     
-    def __init__(self, scan_data, scan_meta):
+    def __init__(self, scan_data):
         self.data = scan_data
-        self.meta = scan_meta
+#         self.meta = scan_meta
          
 
 
@@ -286,16 +286,16 @@ def get_scan(folder_path, file_name, channels, start, end):
     
     scan_files = get_scan_files(folder_path, file_name, start, end)
     scan_data = np.ndarray(shape=[len(channels), len(scan_files)], dtype=TimeSeries)
-    scan_meta = []
+#     scan_meta = []
     
     for i in range(len(scan_files)):
         filedata = read_single_data_file(scan_files[i], channels)
-        scan_meta.append(filedata.meta)
+#         scan_meta.append(filedata.meta)
         for j  in range(len(channels)):
             scan_data[j][i] = filedata.data[j]
 
 #     scan = ScanData(scan_data, calculate_meta(scan_meta))
-    scan = ScanData(scan_data, scan_meta)
+    scan = ScanData(scan_data)
     return scan
     
 def get_scan_files(folder_path, file_name, start, end):
