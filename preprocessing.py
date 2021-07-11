@@ -36,7 +36,7 @@ class TimeSeries:
     
     Attributes
     ----------
-    data : array 
+    data : array 1D
             Data values of the time series. 
     meta : dict 
             Metadata of the time series.
@@ -90,7 +90,7 @@ class FileData:
     
     Attributes
     ----------
-    data : array 
+    data : array 2D
             Data values of the file. The indices of the array correspoond to the channels. Each channel is a TimeSeries object.
     meta : dict 
             Metadata of the file.
@@ -114,7 +114,7 @@ class FileData:
 
 class ScanData:
     """
-    A class to represent data extracted from a single file.
+    A class to represent data extracted from a scan, which is a collection of files.
     
     Attributes
     ----------
@@ -127,8 +127,19 @@ class ScanData:
     def __init__(self, scan_data):
         self.data = scan_data
 #         self.meta = scan_meta
-         
 
+class AllScansData:
+    """
+    A class to represent data extracted from a collection of scans.
+    
+    
+    Attributes
+    ----------
+    
+    """
+    def __init__(self, allscans_data):
+        self.data = allscans_data
+    
 
 def read_single_data_file(file_path, channels, process_data=True):
     '''
@@ -315,12 +326,39 @@ def get_scan_files(folder_path, file_name, start, end):
 #     #TODO
 #     return meta[0]
 
-def find_end_scan(folder_path, file_name):
+def get_all_scans(folder_path, channels, start, end):
+    all_scans_data = np.ndarray(shape=[end-start+1], dtype=ScanData)
+    for idx in range(end-start):
+        file_idx = idx
+        if file_idx % 10 == 0:
+            file_idx+=1
+        file_name = 'scan_' + str(file_idx) + '_'
+        scandata = get_scan(folder_path, file_name, channels, 2, find_last_file(folder_path, file_name)-1)
+        all_scans_data[idx] = scandata
+    allscans = AllScansData(all_scans_data)
+    return allscans
+    
+
+def find_last_file(folder_path, file_name):
     file_num = 1
-    while os.path.isfile(get_data_filepath(folder_path, file_name, str(file_num)):
+    while os.path.isfile(get_data_filepath(folder_path, file_name, str(file_num))):
         file_num+=1
     return file_num-1
 
+def find_last_scan(folder_path):
+    idx = 1
+    file_name = 'scan_' + str(idx) + '_'
+    while os.path.isfile(get_data_filepath(folder_path, file_name, str(1))):
+        if idx % 10 == 9:
+            idx+=2
+        else:
+            idx+=1
+        file_name = 'scan_' + str(idx) + '_'
+    if idx % 10 == 1:
+        idx-=2
+    else:
+        idx-=1
+    return idx
 
 def write_data_ts(file_path, data_ts):
     """
