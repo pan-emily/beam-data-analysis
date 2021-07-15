@@ -327,7 +327,7 @@ def get_scan_files(folder_path, file_name, start, end):
 #     return meta[0]
 
 def get_all_scans(folder_path, channels, start, end):
-    all_scans_data = np.ndarray(shape=[end-start+1], dtype=ScanData)
+    all_scans_data = np.ndarray(shape=[end-start], dtype=ScanData)
     for idx in range(end-start):
         file_idx = idx
         if file_idx % 10 == 0:
